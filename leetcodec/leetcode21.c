@@ -23,7 +23,34 @@
  * };
  */
 
+#include <stdio.h>
+#include <stdlib.h>
 
 struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2){
+    struct ListNode* result;
+    struct ListNode* head1 = (struct ListNode*)malloc(sizeof(struct ListNode));
+    head1->next=list1;
+    result = head1;
+    struct ListNode* head2 = (struct ListNode*)malloc(sizeof(struct ListNode));
+    head2=list2;
+    list2=list2->next;
+    while(list1->next==NULL&&list2->next==NULL){
+        if(head1->next->val<=head2->val || list2->next==NULL){
+            head1=head1->next; 
+            list1=list1->next;
+        }else if (head1->next->val>head2->val || list1->next==NULL){
+            head1->next=head2;
+            head2->next=head1;
+            head1=head1->next;
+            head2=list2;
+            list2=list2->next;    
+        }    
+    }
+    return result->next; 
+}
 
+int main(){
+        
+ 
+    return 0;
 }
