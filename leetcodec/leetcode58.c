@@ -24,8 +24,17 @@
 链接：https://leetcode.cn/problems/length-of-last-word
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。*/
 
-
+#include <stdio.h>
+#include <string.h>
 
 int lengthOfLastWord(char * s){
+    int poniter = strlen(s)-1;
+    int result = 0;
 
+    while(pointer>=0&&*(s+pointer)!=' '){
+        pointer--;
+        result++; 
+    }
+
+    return result;
 }

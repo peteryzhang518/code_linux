@@ -21,8 +21,35 @@
 链接：https://leetcode.cn/problems/search-insert-position
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。*/
 
+#include <stdio.h>
+#include <stdlib.h>
 
 
 int searchInsert(int* nums, int numsSize, int target){
+    int top =0 ; int bottom = numsSize-1; int result = 0; int mid = 0;
 
+//different  :  why is < =
+    while (top < bottom){                                           
+
+//different : why is (bottom-top)/2+top  
+        mid = (bottom-top)/2;
+        if(*(nums+mid)>target){
+
+//different : why is mid -1 
+            bottom = mid;
+        }else{
+
+//different : why is mid + 1
+            top = mid;
+        }
+    }     
+    result =mid;
+}
+
+int main(){
+    int temp[4]={1,3,5,6};
+    int result = searchInsert(temp, 4, 5);
+
+    printf("result = %d\n", result);
+    return 0;
 }
