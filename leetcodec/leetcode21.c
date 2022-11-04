@@ -62,35 +62,49 @@ void printflist(struct ListNode* head){
 
 
 struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2){
+    if(list1==NULL){
+        return list2;
+    }
+    if(list2==NULL){
+        return list1;
+    }
+    // need 4 pointer with two list
     struct ListNode* result;
     struct ListNode* head1 = (struct ListNode*)malloc(sizeof(struct ListNode));
     head1->next=list1;
     result = head1;
-    struct ListNode* head2 = (struct ListNode*)malloc(sizeof(struct ListNode));
-    head2=list2;
+
+    struct ListNode* head2 = list2;
     list2=list2->next;
-    while(list1->next!=NULL&&list2->next!=NULL){
-        if(list1->val>head2->val || list2->next==NULL){
+
+    while(head1->next!=NULL&&head2->next!=NULL){
+        // l1>h2  only consider h2 and l1 ,h2 with h1 is not necesserly
+        if(list1->val<=head2->val){
+            // the first line step
             head1=head1->next; 
             list1=list1->next;
         }else{
+            // the secound line step
             head1->next=head2;
-            head2->next=head1;
+            head2->next=list1;
             head1=head1->next;
             head2=list2;
             list2=list2->next;    
         }    
     }
-        if(head1->next->val<=head2->val || list2->next==NULL){
-            head1=head1->next; 
-            list1=list1->next;
-        }else if (head1->next->val>head2->val || list1->next==NULL){
+
+    //whenever  there is two case. one is head1==NUll one is head2 ==NULL ,both is same with head1==NULL or head2 == NULL
+    if(head1->next==NULL){
+        head1->next==head2;
+    }else{
+        if(list1->val>head2->val){
             head1->next=head2;
-            head2->next=head1;
-            head1=head1->next;
-            head2=list2;
-            list2=list2->next;    
-        }    
+            head2->next=list1;
+        }else{
+            list1->next=head2;
+        }
+    }
+
     return result->next; 
 }
 

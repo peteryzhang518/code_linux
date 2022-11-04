@@ -39,7 +39,50 @@ for (int i = 0; i < len; i++) {
 链接：https://leetcode.cn/problems/remove-element
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。*/
 
+#include <stdio.h>
+#include <stdlib.h>
+
 
 int removeElement(int* nums, int numsSize, int val){
+    if(numsSize ==0){
+        return 0;
+    }
+    int top=0;
+    int bottom=numsSize-1;
+    while(top!=bottom){
+        if(val==*(nums+top)){
+            while(top!=bottom){
+                if(val!=*(nums+bottom)){
+                    *(nums+top)=*(nums+bottom);
+                    bottom--;
+                    if(top==bottom){
+                        return bottom-1;
+                    }
+                    break;
+                }else{
+                    bottom--;
+                    if(top==bottom){
+                        return bottom;
+                    }
+                }
+            }
+            top++;
+        }else{
+            top++;
+        }
+    } 
+    if(val == *(nums+bottom)){
+        bottom--;
+    } 
+    return bottom+1;
+}
 
+int main(){
+    int temp[2] = {4,5};
+
+    int result = removeElement(temp, 2, 4);
+
+    printf("reslut = %d ", result); 
+
+    return 0;
 }

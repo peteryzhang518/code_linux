@@ -40,6 +40,37 @@ for (int i = 0; i < k; i++) {
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。*/
 
 
-int removeDuplicates(int* nums, int numsSize){
 
+
+
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int removeDuplicates(int* nums, int numsSize){
+    int temp = 0;
+    for(int i = 0; i<numsSize; i++){
+        if(*(nums+temp)!=*(nums+i)){
+            temp++;
+            *(nums+temp)=*(nums+i);
+        } 
+    }
+    return temp+1;
 }
+
+int main(){
+    int inputnum[10] = {1,1,2};
+    int result = removeDuplicates(inputnum,3);
+
+    printf("%d", result);
+    return 0;
+}
+
+
+
+
+
