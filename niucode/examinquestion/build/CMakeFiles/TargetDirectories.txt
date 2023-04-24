@@ -1,0 +1,4 @@
+/home/p/code/niucode/examinquestion/build/CMakeFiles/bm24.out.dir
+/home/p/code/niucode/examinquestion/build/CMakeFiles/stack.dir
+/home/p/code/niucode/examinquestion/build/CMakeFiles/edit_cache.dir
+/home/p/code/niucode/examinquestion/build/CMakeFiles/rebuild_cache.dir

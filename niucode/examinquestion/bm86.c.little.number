@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+char* solve(char* s, char* t ) {
+    // write code here
+    long int sum1 = 0;
+    long int sum2 = 0;
+    int i=0, j=0; 
+    while(*(s+i)){
+        sum1 = sum1*10 + ((int)*(s+i)-48);
+        i++;
+    }
+    while(*(t+j)){
+        sum2 = sum2*10 + ((int)*(t+j)-48);
+        j++;
+    }
+    sum1 = sum1 + sum2;
+    int resultlen=i>j?i+1:j+1;
+    char* result = (char*)malloc(resultlen+1);
+    *(result+resultlen) = 0;
+    for(int k=resultlen; k>0; k--){
+        *(result+k-1) = (char)(sum1%10+48);
+        sum1 = sum1/10;
+    }
+    if (*result=='0') {
+        return result+1;
+    } else {
+        return result;
+    }
+}
+
+int main (){
+    char* s = "23";
+    char* t = "45";
+
+    char* result = solve(s,t);
+
+    printf("%s\n",result);
+    return 0;
+}

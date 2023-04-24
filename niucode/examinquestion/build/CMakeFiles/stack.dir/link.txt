@@ -1,0 +1,1 @@
+/usr/bin/cc -fPIC  -g -shared -Wl,-soname,libstack.so -o libstack.so CMakeFiles/stack.dir/home/p/code/mylib/stack/stack.c.o 
