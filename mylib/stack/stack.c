@@ -1,40 +1,47 @@
 #include "stack.h"
+#include <stdlib.h>
+#include <stdio.h>
 
-bool init_stack(Stack* stack)
+
+bool init_stack(struct Stack* stack)
 {
-    stack = (Data*)malloc(STACK_INIT_SIZE * sizeof(Data*));
-    
-    stack->top = stack;
-    stack->bottom = stack;
+    stack->top = (Data**)malloc(STACK_INIT_SIZE * sizeof(Data*));
+    stack->bottom = stack->top;
 
-    stack->size = STACK_INIT_SIZE ;
+    stack->size = STACK_INIT_SIZE;
     return 1; 
 }
 
 
 
-bool stack_is_empty(const Stack*  const stack);
-{
-    return 0;
+bool stack_is_empty(const struct Stack*  const stack)
+{ 
+    return  stack->top - stack->bottom == 0 ? true : false;
 }
 
 
 
-bool stack_push(Stack* stack, const Data* const data)
+bool stack_push(struct Stack* stack, Data* data)
 {
-    if (!stack->top) {
-        stack = (Data*)realloc( o    
-        stack->base,( stack->stack_size + STACKINCREMENT ) * sizeof(DataType));
+    if (stack->top - stack->bottom == stack->size-1) {
+        stack = (struct Stack*)realloc(stack->bottom, stack->size * 2 * sizeof(Data*));
     }
+    *stack->top = data;
     stack->top = stack->top+1; 
-    stack->top = data;
     
     return 1;
 }
 
 
 
-bool stack_pop (Stack *stack,  Data *data);
+bool stack_pop (struct Stack *stack, Data** data)
 {
-    if (
+    if (stack->top - stack->bottom != 0) {
+        Data** temp = stack->top; 
+        stack->top = stack->top-1; 
+        temp = NULL;
+        *data = *stack->top; 
+    }
+    
+    return 0;
 }

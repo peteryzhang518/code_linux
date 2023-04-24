@@ -25,9 +25,11 @@ char* trans(char* s, int n ) {
             j++;
             k++;
         }
-        result[k] = ' ';
-        k++;
-        i--;
+        if(i>=0 && s[i]==' '){
+            result[k] = ' ';
+            k++;
+            i--;
+        }
     }
 
     for(int q = 0; q<n; q++){
@@ -42,9 +44,9 @@ char* trans(char* s, int n ) {
 }
 
 int main(){
-    char test[16] = {"This is a sample"};
+    char test[4] = {"h i"};
     
-    char* result = trans(test,16);
+    char* result = trans(test,4);
     
     printf ("%s", result);
 
