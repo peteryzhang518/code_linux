@@ -20,23 +20,22 @@ int* inorderTraversal(struct TreeNode* root, int* returnSize ) {
     // write code here
     struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
     init_stack(stack);
-    int result[30];
+    int* result = (int *)malloc(sizeof(int) * 30);
     *returnSize = 0;
-    while (root || (stack->top - stack->bottom != stack->size-1)) {
+    while (root || (stack->top - stack->bottom != 0)) {
         while (root) {
             stack_push(stack, (Data*)(root));
             root = root->left;
         }
-
         stack_pop(stack, (Data**)&root);
+
         *(result + *returnSize) = root->val;
+        (*returnSize)++;
 
-        root = root->right;
-
-        *returnSize++;
+            root = root->right;
     } 
 
-    return returnSize;
+    return result;
 }
 
 
@@ -62,7 +61,7 @@ int main ()
      
     result = inorderTraversal(root, &resultSize);
 
-    for( int i; i < *result; i++) {
+    for(int i = 0; i < resultSize; i++) {
         printf(" %d \n " , *(result + i));
     }
 
