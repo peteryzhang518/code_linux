@@ -40,6 +40,8 @@ int** levelOrder(struct TreeNode* root, int* returnSize, int** returnColumnSizes
         i++;
         j = 0;
     }
+    *returnSize = i;
+    **returnColumnSizes = j;
 
     return (int**)result;
 }
@@ -63,10 +65,12 @@ int main ()
     root->left->right->left = NULL;
     root->left->right->right = NULL;
 
+    int resultcSize = 0;
     int resultSize = 0;
-    int* result = NULL;
+    int resultInt[30][30] = { 0 };
+    int** result = &resultInt;
      
-    result = levelOrder(root, &resultSize);
+    result = levelOrder(root, &resultSize, &(&resultcSize));
 
     for(int i = 0; i < resultSize; i++) {
         printf(" %d \n " , *(result + i));
