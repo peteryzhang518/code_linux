@@ -1,1 +1,0 @@
-/usr/bin/cc  -g -rdynamic CMakeFiles/bm24.out.dir/home/p/code/niucode/examinquestion/bm24.c.o -o bm24.out  -Wl,-rpath,/home/p/code/niucode/examinquestion/build libstack.so 
