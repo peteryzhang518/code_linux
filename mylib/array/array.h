@@ -6,7 +6,7 @@
 
 struct arrayNode
 {
-    int val;
+    int* val;
     struct arrayNode* next;
 };
 

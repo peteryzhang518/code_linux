@@ -12,10 +12,11 @@ int init_array(struct array* array)
 int array_push (struct array* array, Data* data)
 {
     array->arraySize = array->arraySize + 1;
+    array->bottow->val = data;
     struct arrayNode* newNode = (struct arrayNode*)malloc(sizeof(struct arrayNode));
     array->bottow->next = newNode;
     array->bottow = array->bottow->next;
-    array->bottow->val = *data;
+
     return ret;
 }
 
@@ -24,7 +25,7 @@ int array_pop (struct array* array, Data** data)
     if (array->arraySize == 0) {
         return ret;
     }
-    **data = array->top->val;
+    *data = array->top->val;
     array->arraySize = array->arraySize - 1;
     struct arrayNode* temp = array->top->next;
     free(array->top);
