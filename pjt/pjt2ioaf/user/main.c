@@ -75,9 +75,9 @@ typedef enum
   DMA2_Channel4_5_IRQn        = 59,     /*!< DMA2 Channel 4 and Channel 5 global Interrupt        */
 } IRQn_Type;
 
-#define __IOM volatile  // 可读可写
-#define __IM volatile const  // 只读
-#define __OM volatile  // 只写
+#define __IOM volatile  // �?读可�?
+#define __IM volatile const  // �?�?
+#define __OM volatile  // �?�?
 
 typedef struct
 {
@@ -128,15 +128,6 @@ typedef struct {
 #define NVIC                ((NVIC_Type      *)     NVIC_BASE     )   /*!< NVIC configuration struct */
 
 
-
-
-
-
-
-
-
-
-
 #define RCC_BASE_ADDR   0x40021000
 #define GPIOC_BASE_ADDR 0x40011000
 #define GPIOA_BASE_ADDR 0x40010800
@@ -168,11 +159,29 @@ typedef struct {
 #define TIM6_DAC_IRQHandler           TIM6_IRQHandler
 #define BTIM_TIMX_INT_IRQHandler            TIM6_DAC_IRQHandler
 
+#define GPIOC_BASE_ADDR 0x40011000
+#define GPIOA_BASE_ADDR 0x40010800
+#define GPIO_CRL_OFFSET  0x00
+#define GPIO_CRH_OFFSET  0x04
+#define GPIO_IDR_OFFSET  0x08
+#define GPIO_ODR_OFFSET  0x0C
+
+#define AFIO_BASE_ADDR  0x40010000
+#define AFIO_EXTICR1_OFFSET  0x08
+#define AFIO_EXTICR2_OFFSET  0x0C
+#define AFIO_EXTICR3_OFFSET  0x10
+#define AFIO_EXTICR4_OFFSET  0x14
+
+#define EXTI_BASE_ADDR 0x40010400
+#define EXTI_IMR_OFFSET 0x0
+#define EXTI_FTSR_OFFSET 0x0C
+#define EXTI_PR_OFFSET 0x14
 
 void BTIM_TIMX_INT_IRQHandler(void);
-
+int signPZ = 0;
 int main(void) {
     // ?? GPIOC ? TIM6 ??
+    (*(volatile int*)(RCC_BASE_ADDR + RCC_APB2ENR_OFFSET)) |= (1 << 0); // AFIO
     (*(volatile int*)(RCC_BASE_ADDR + RCC_APB2ENR_OFFSET)) |= (1 << 2); // GPIOA
     (*(volatile int*)(RCC_BASE_ADDR + RCC_APB2ENR_OFFSET)) |= (1 << 4); // GPIOC
 
@@ -180,81 +189,153 @@ int main(void) {
     (*(volatile int *)(GPIOA_BASE_ADDR + GPIO_CRH_OFFSET)) &= ~(0xF << 0); // ?? PA8 ????
     (*(volatile int *)(GPIOA_BASE_ADDR + GPIO_CRH_OFFSET)) |= (0x3 << 0);   // ?? PA8 ???????, 10MHz
 
-    (*(volatile int *)(GPIOC_BASE_ADDR + GPIO_CRL_OFFSET)) &= ~(0xF << 0); // ?? PC13 ????
-    (*(volatile int *)(GPIOC_BASE_ADDR + GPIO_CRL_OFFSET)) |= (0x1 << 23);   // ?? PC13 ???????, 10MHz
-
-    // ?? TIM6 ??????
-
-    (*(volatile int *)(NVIC_ISER_BASE_ADDR)) |= (1 << 17); // TIM6_DAC_IRQn = 17
-
-	
-	
-	
+      //key 0
+    (*(volatile int *)(GPIOC_BASE_ADDR + GPIO_CRL_OFFSET)) &= ~(0xF << 20); // ?? PC5 ????
+    (*(volatile int *)(GPIOC_BASE_ADDR + GPIO_CRL_OFFSET)) |= (0x1 << 23);   // ?? PC5 ???????, 10MHz
+    (*(volatile int *)(GPIOC_BASE_ADDR + GPIO_ODR_OFFSET)) |= (1 << 5);
+    //(*(volatile int *)(GPIOC_BASE_ADDR + GPIO_ODR_OFFSET)) &= ~(1 << 5);
 
 
-//sys_nvic_init(1, 3, BTIM_TIMX_INT_IRQn, 2); /* 抢占1，子优先级3，组2 */
-		uint32_t temp;
-		uint32_t temp1;
-		uint32_t temp2;
+    //(*(volatile int *)(NVIC_ISER_BASE_ADDR)) |= (1 << 17); // TIM6_DAC_IRQn = 17
 
 
-//sys_nvic_priority_group_config(2);  /* 设置分组 */
-		temp1 = (~2) & 0x07;/* 取后三位 */
-		temp1 = temp1 << 8;
-		temp = SCB->AIRCR;      /* 读取先前的设置 */
-    temp &= 0X0000F8FF;     /* 清空先前分组 */
-    temp |= 0X05FA0000;     /* 写入钥匙 */
-    temp |= temp1;
-    SCB->AIRCR = temp;      /* 设置分组 */
+      //pc5
 
-    temp2 = 1 << (4 - 2);
-    temp2 |= 3 & (0x0f >> 2);
-    temp2 &= 0xf;                            /* 取低四位 */
-    NVIC->ISER[BTIM_TIMX_INT_IRQn / 32] |= 1 << (BTIM_TIMX_INT_IRQn % 32);  /* 使能中断位(要清除的话,设置ICER对应位为1即可) */
-    NVIC->IP[BTIM_TIMX_INT_IRQn] |= temp << 4; 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+      int pinpos = 5;
+      int offset = (pinpos % 4) * 4;
+      (*(volatile int *)(AFIO_BASE_ADDR + AFIO_EXTICR2_OFFSET)) &= ~(0xF << offset);    /* 清除原来设置！！�? */
+      //(*(volatile int *)(AFIO_BASE_ADDR + AFIO_EXTICR2_OFFSET)) &= ~(0x000F << offset);    /* 清除原来设置！！�? */
+      //AFIO_BASE_ADDR + AFIO_EXTICR2_OFFSET |= gpio_num << offset;     /* EXTI.BITx映射到gpiox.bitx */
+      (*(volatile int *)(AFIO_BASE_ADDR + AFIO_EXTICR2_OFFSET)) |= 0x2 << offset;     /* EXTI.BITx映射到gpiox.bitx */
+
+      (*(volatile int *)(EXTI_BASE_ADDR + EXTI_IMR_OFFSET)) |= 1 << pinpos;   /* 开启line BITx上的�?�?(如果要�?��??�?�?，则反操作即�?) */
+      (*(volatile int *)(EXTI_BASE_ADDR + EXTI_FTSR_OFFSET)) |= 1 << pinpos;        /* line bitx上事件下降沿触发 */
+
+
+//    sys_nvic_ex_config(KEY0_INT_GPIO_PORT, KEY0_INT_GPIO_PIN, SYS_GPIO_FTIR);   /* KEY0配置为下降沿触发中断 */
+//      void sys_nvic_ex_config(GPIO_TypeDef *p_gpiox, uint16_t pinx, uint8_t tmode)
+//      {
+//      uint8_t offset;
+//      uint32_t gpio_num = 0;      /* gpio编号, 0~10, 代表GPIOA~GPIOG */
+//      uint32_t pinpos = 0, pos = 0, curpin = 0;
+//
+//      gpio_num = ((uint32_t)p_gpiox - (uint32_t)GPIOA) / 0X400 ;/* 得到gpio编号 */
+//      //RCC->APB2ENR |= 1 << 0;     /* AFIO = 1,使能AFIO时钟 */
+//
+//      for (pinpos = 0; pinpos < 16; pinpos++)
+//      {
+//            pos = 1 << pinpos;      /* 一个个位检查 */
+//            curpin = pinx & pos;    /* 检查引脚是否要设置 */
+//
+//            if (curpin == pos)      /* 需要设置 */
+//            {
+//                  offset = (pinpos % 4) * 4;
+//                  AFIO->EXTICR[pinpos / 4] &= ~(0x000F << offset);    /* 清除原来设置！！！ */
+//                  AFIO->EXTICR[pinpos / 4] |= gpio_num << offset;     /* EXTI.BITx映射到gpiox.bitx */
+//
+//                  EXTI->IMR |= 1 << pinpos;   /* 开启line BITx上的中断(如果要禁止中断，则反操作即可) */
+//
+//                  if (tmode & 0x01) EXTI->FTSR |= 1 << pinpos;        /* line bitx上事件下降沿触发 */
+//
+//                  if (tmode & 0x02) EXTI->RTSR |= 1 << pinpos;        /* line bitx上事件上升降沿触发 */
+//            }
+//      }
+//      }
+
+
+    //sys_nvic_init( 0, 2, KEY0_INT_IRQn, 2); /* 抢占0，子优先级2，组2 */
+     // void sys_nvic_init(uint8_t pprio, uint8_t sprio, uint8_t ch, uint8_t group)
+      
+      uint32_t temp3 = 0;
+      //sys_nvic_priority_group_config(group);  /* 设置分组 */
+
+      uint32_t temp = 0;
+      uint32_t temp1 = 0;
+            
+      temp1 = (~2 /*group*/) & 0x07;/* 取后三位 */
+      temp1 <<= 8;
+      temp = SCB->AIRCR;      /* 读取先前的设置 */
+      temp &= 0X0000F8FF;     /* 清空先前分组 */
+      temp |= 0X05FA0000;     /* 写入钥匙 */
+      temp |= temp1;
+      SCB->AIRCR = temp;      /* 设置分组 */
+
+      temp3 = 0 /*pprio*/ << (4 - 2 /*group*/);
+      temp3 |= 2 /*sprio*/ & (0x0f >> 2 /*group*/);
+      temp3 &= 0xf;                            /* 取低四位 */
+      NVIC->ISER[EXTI9_5_IRQn / 32] |= 1 << (EXTI9_5_IRQn % 32);  /* 使能中断位(要清除的话,设置ICER对应位为1即可) */
+      NVIC->IP[EXTI9_5_IRQn] |= temp3 << 4;              /* 设置响应优先级和抢断优先级 */
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      //if (tmode & 0x02) EXTI->RTSR |= 1 << pinpos;        /* line bitx上事件上升降沿触�? */
+
+////     (*(volatile int *)(NVIC_ISER_BASE_ADDR)) |= (1 << 23); // TIM6_DAC_IRQn = 17
+////sys_nvic_init(1, 3, BTIM_TIMX_INT_IRQn, 2); /* 抢占1，子优先�?3，组2 */
+//      uint32_t temp = 0;
+//      uint32_t temp1 = 0;
+//      uint32_t temp2 = 0;
+////sys_nvic_priority_group_config(2);  /* 设置分组 */
+//      temp1 = (~2) & 0x07;/* 取后三位 */
+//      temp1 = temp1 << 8;
+//      temp = SCB->AIRCR;      /* 读取先前的�?�置 */
+//      temp &= 0X0000F8FF;     /* 清空先前分组 */
+//      temp |= 0X05FA0000;     /* 写入钥匙 */
+//      temp |= temp1;
+//      SCB->AIRCR = temp;      /* 设置分组 */
+//
+//      temp2 = 1 << (4 - 2);
+//      temp2 |= 3 & (0x0f >> 2);
+//      temp2 &= 0xf;                            /* 取低四位 */
+//
+//      (*(volatile int *)(NVIC_ISER_BASE_ADDR + (EXTI9_5_IRQn / 32))) |= (1 << (EXTI9_5_IRQn % 32)); // 使能EXTI9_5中断
+//      NVIC->ISER[EXTI9_5_IRQn / 32] |= 1 << (EXTI9_5_IRQn % 32);  /* 使能�?�?�?(要清除的�?,设置ICER对应位为1即可) */
+//      NVIC->IP[EXTI9_5_IRQn] |= temp << 4; 
     while (1) {
-        // ?? TIM6 ????
-//        while (!(*(volatile int *)(TIM6_BASE_ADDR + TIM_SR_OFFSET) & (1 << 0)));
-//
-//        // ?? TIM6 ????
-//        (*(volatile int *)(TIM6_BASE_ADDR + TIM_SR_OFFSET)) &= ~(1 << 0);
-//
-//        // ?? PC13 ????,?? LED ??
-//        (*(volatile int *)(GPIOA_BASE_ADDR + GPIO_ODR_OFFSET)) ^= (1 << LED_PIN);
     }
 
     return 0;
 }
 
-// TIM6 中断处理程序
-void BTIM_TIMX_INT_IRQHandler(void) {
-    // 检查更新中断标志
-    if ((*(volatile int *)(TIM6_BASE_ADDR + TIM_SR_OFFSET)) & (1 << 0)) {
-        // 切换 PA8 引脚状态，控制 LED 闪烁
-        (*(volatile int *)(GPIOA_BASE_ADDR + GPIO_ODR_OFFSET)) ^= (1 << LED_PIN);
-        // 清除更新中断标志
-        (*(volatile int *)(TIM6_BASE_ADDR + TIM_SR_OFFSET)) &= ~(1 << 0);
-    }
+void EXTI9_5_IRQHandler (void) {
+    //if ((*(volatile int *)(EXTI_BASE_ADDR + EXTI_PR_OFFSET)) = (1 << 5)) {
+    if ((*(volatile int *)(EXTI_BASE_ADDR + EXTI_PR_OFFSET)) & (1 << 5)) {
+      //if (KEY0 == 0)
+//      if ((*(volatile int *)(GPIOC_BASE_ADDR + GPIO_IDR_OFFSET)) & (1 << 5))
+//      {
+            (*(volatile int *)(GPIOA_BASE_ADDR + GPIO_ODR_OFFSET)) ^= (1 << LED_PIN);
+            (*(volatile int *)(EXTI_BASE_ADDR + EXTI_PR_OFFSET)) |= ~(1 << 5);
+            signPZ++;
+//      }
+
+    }  /* ���KEY0�����ж��� ���жϱ�־λ */
+
+    // 检查更新中�?标志
+    //if ((*(volatile int *)(TIM6_BASE_ADDR + TIM_SR_OFFSET)) & (1 << 0)) {
+    //    // 切换 PA8 引脚状态，控制 LED �?�?
+    //    (*(volatile int *)(GPIOA_BASE_ADDR + GPIO_ODR_OFFSET)) ^= (1 << LED_PIN);
+    //    // 清除更新�?�?标志
+    //    (*(volatile int *)(TIM6_BASE_ADDR + TIM_SR_OFFSET)) &= ~(1 << 0);
+    //}
 }
-
-
